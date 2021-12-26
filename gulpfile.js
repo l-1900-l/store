@@ -3,6 +3,7 @@ var sass = require('gulp-sass')(require('sass'));
 const rename = require('gulp-rename');
 const cleanCSS = require('gulp-clean-css');
 const htmlmin = require('gulp-htmlmin');
+const pug = require('gulp-pug');
 
 gulp.task('compile-sass', function () {
   gulp.src('src/assets/sass/*.scss')
@@ -26,3 +27,18 @@ gulp.task('minify-html', () => {
     .pipe(rename('indexMin.html'))
     .pipe(gulp.dest('dist'));
 });
+
+gulp.task('compilePug', () => {
+  src('./src/*.pug')
+    .pipe(pug({ // your option
+    }))
+    .pipe(dest('./dist'));
+});
+
+gulp.task('watch', function () {
+  gulp.watch('src/assets/sass/*', gulp.series('compile-sass'));
+  gulp.watch('src/assets/css/*', gulp.series('minify-css'));
+  gulp.watch('src/*', gulp.series('compilePug'));
+});
+
+gulp.task('default', gulp.parallel('compile-sass', 'minify-css', 'compilePug', 'watch'));
